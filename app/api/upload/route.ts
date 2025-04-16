@@ -1,27 +1,25 @@
-import { NextRequest, NextResponse } from 'next/server';
-import { IncomingForm } from 'formidable';
-import fs from 'fs';
+import { NextRequest, NextResponse } from "next/server";
+import formidable from "formidable";
+import fs from "fs";
+import { promisify } from "util";
 
-export const config = {
-  api: {
-    bodyParser: false,
-  },
-};
+export const dynamic = "force-dynamic"; // 👈 Novo padrão exigido pelo Next.js
 
 export async function POST(req: NextRequest) {
-  const form = new IncomingForm({ multiples: true, keepExtensions: true });
+  const form = formidable({ multiples: true, uploadDir: "/tmp", keepExtensions: true });
+  const parseForm = promisify(form.parse);
 
-  return new Promise((resolve, reject) => {
-    form.parse(req as any, async (err, fields, files) => {
-      if (err) {
-        console.error('Erro ao processar upload:', err);
-        return reject(new NextResponse('Erro ao fazer upload', { status: 500 }));
-      }
+  const buffer = await req.arrayBuffer();
+  const fileData = Buffer.from(buffer);
 
-      console.log('Arquivos recebidos:', files);
+  try {
+    // Simula o salvamento do arquivo
+    const filePath = "/tmp/uploaded_file";
+    fs.writeFileSync(filePath, fileData);
 
-      return resolve(new NextResponse('Upload feito com sucesso!', { status: 200 }));
-    });
-  });
+    return NextResponse.json({ success: true, path: filePath });
+  } catch (error: any) {
+    return NextResponse.json({ success: false, error: error.message }, { status: 500 });
+  }
 }
 
