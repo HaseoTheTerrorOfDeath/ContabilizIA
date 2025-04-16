@@ -1,89 +1,105 @@
-"use client";
+'use client';
 
-import { useState } from "react";
-import { jsPDF } from "jspdf";
+import { useState } from 'react';
+
+type Linha = { nome: string; valor: string };
 
 export default function DREPage() {
-  const [receitaBruta, setReceitaBruta] = useState(0);
-  const [deducoes, setDeducoes] = useState(0);
-  const [custos, setCustos] = useState(0);
-  const [despesas, setDespesas] = useState(0);
+  const [receitas, setReceitas] = useState<Linha[]>([{ nome: '', valor: '' }]);
+  const [despesas, setDespesas] = useState<Linha[]>([{ nome: '', valor: '' }]);
 
-  const receitaLiquida = receitaBruta - deducoes;
-  const lucroOperacional = receitaLiquida - custos - despesas;
-
-  const gerarPDF = () => {
-    const doc = new jsPDF();
-
-    doc.setFontSize(18);
-    doc.text("Demonstração do Resultado do Exercício (DRE)", 14, 22);
-    doc.setFontSize(12);
-
-    doc.text(`Receita Bruta: R$ ${receitaBruta.toFixed(2)}`, 14, 40);
-    doc.text(`(-) Deduções: R$ ${deducoes.toFixed(2)}`, 14, 47);
-    doc.text(`= Receita Líquida: R$ ${receitaLiquida.toFixed(2)}`, 14, 54);
-    doc.text(`(-) Custos: R$ ${custos.toFixed(2)}`, 14, 61);
-    doc.text(`(-) Despesas Operacionais: R$ ${despesas.toFixed(2)}`, 14, 68);
-    doc.text(`= Lucro/Prejuízo do Exercício: R$ ${lucroOperacional.toFixed(2)}`, 14, 75);
-
-    doc.save("dre.pdf");
+  const handleChange = (
+    index: number,
+    key: 'nome' | 'valor',
+    value: string,
+    tipo: 'receita' | 'despesa'
+  ) => {
+    const lista = tipo === 'receita' ? [...receitas] : [...despesas];
+    lista[index][key] = value;
+    tipo === 'receita' ? setReceitas(lista) : setDespesas(lista);
   };
 
+  const adicionarLinha = (tipo: 'receita' | 'despesa') => {
+    const nova = { nome: '', valor: '' };
+    tipo === 'receita' ? setReceitas([...receitas, nova]) : setDespesas([...despesas, nova]);
+  };
+
+  const calcularTotal = (linhas: Linha[]) =>
+    linhas.reduce((acc, cur) => acc + parseFloat(cur.valor || '0'), 0);
+
+  const totalReceitas = calcularTotal(receitas);
+  const totalDespesas = calcularTotal(despesas);
+  const resultado = totalReceitas - totalDespesas;
+
+  const sugestaoIA = resultado < 0
+    ? "Alerta: Seu resultado está negativo. Considere revisar suas despesas e renegociar dívidas."
+    : resultado === 0
+    ? "Atenção: Lucro nulo. Pode indicar margem apertada ou erro de lançamento."
+    : "Bom resultado! Continue controlando os gastos e otimizando receitas.";
+
   return (
-    <div className="p-10">
-      <h1 className="text-3xl font-bold mb-6">Demonstração do Resultado do Exercício (DRE)</h1>
+    <div className="p-8 max-w-6xl mx-auto">
+      <h1 className="text-3xl font-bold mb-6">Demonstrativo de Resultado do Exercício (DRE)</h1>
 
-      <div className="grid md:grid-cols-2 gap-8 mb-10">
-        <div className="flex flex-col">
-          <label className="mb-1">Receita Bruta (R$)</label>
-          <input
-            type="number"
-            value={receitaBruta}
-            onChange={(e) => setReceitaBruta(parseFloat(e.target.value))}
-            className="border p-2 rounded-md"
-          />
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-10">
+        {/* Receitas */}
+        <div>
+          <h2 className="text-xl font-semibold mb-2">Receitas</h2>
+          {receitas.map((linha, i) => (
+            <div key={i} className="flex gap-2 mb-2">
+              <input
+                className="flex-1 p-2 border rounded"
+                placeholder="Origem da receita"
+                value={linha.nome}
+                onChange={(e) => handleChange(i, 'nome', e.target.value, 'receita')}
+              />
+              <input
+                type="number"
+                className="w-32 p-2 border rounded"
+                placeholder="Valor"
+                value={linha.valor}
+                onChange={(e) => handleChange(i, 'valor', e.target.value, 'receita')}
+              />
+            </div>
+          ))}
+          <button onClick={() => adicionarLinha('receita')} className="text-blue-600 text-sm mt-1 hover:underline">
+            + Adicionar receita
+          </button>
         </div>
-        <div className="flex flex-col">
-          <label className="mb-1">Deduções (R$)</label>
-          <input
-            type="number"
-            value={deducoes}
-            onChange={(e) => setDeducoes(parseFloat(e.target.value))}
-            className="border p-2 rounded-md"
-          />
-        </div>
-        <div className="flex flex-col">
-          <label className="mb-1">Custos (R$)</label>
-          <input
-            type="number"
-            value={custos}
-            onChange={(e) => setCustos(parseFloat(e.target.value))}
-            className="border p-2 rounded-md"
-          />
-        </div>
-        <div className="flex flex-col">
-          <label className="mb-1">Despesas Operacionais (R$)</label>
-          <input
-            type="number"
-            value={despesas}
-            onChange={(e) => setDespesas(parseFloat(e.target.value))}
-            className="border p-2 rounded-md"
-          />
+
+        {/* Despesas */}
+        <div>
+          <h2 className="text-xl font-semibold mb-2">Despesas</h2>
+          {despesas.map((linha, i) => (
+            <div key={i} className="flex gap-2 mb-2">
+              <input
+                className="flex-1 p-2 border rounded"
+                placeholder="Tipo de despesa"
+                value={linha.nome}
+                onChange={(e) => handleChange(i, 'nome', e.target.value, 'despesa')}
+              />
+              <input
+                type="number"
+                className="w-32 p-2 border rounded"
+                placeholder="Valor"
+                value={linha.valor}
+                onChange={(e) => handleChange(i, 'valor', e.target.value, 'despesa')}
+              />
+            </div>
+          ))}
+          <button onClick={() => adicionarLinha('despesa')} className="text-blue-600 text-sm mt-1 hover:underline">
+            + Adicionar despesa
+          </button>
         </div>
       </div>
 
-      <div className="bg-gray-100 p-6 rounded-md shadow-md max-w-md mx-auto mb-10">
-        <p className="text-lg">Receita Líquida: <strong>R$ {receitaLiquida.toFixed(2)}</strong></p>
-        <p className="text-lg">Lucro/Prejuízo: <strong>R$ {lucroOperacional.toFixed(2)}</strong></p>
-      </div>
-
-      <div className="text-center">
-        <button
-          onClick={gerarPDF}
-          className="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-8 rounded-md transition"
-        >
-          Gerar PDF
-        </button>
+      <div className="mt-10 bg-gray-100 p-6 rounded-lg space-y-2">
+        <p>Total de Receitas: <strong>R$ {totalReceitas.toFixed(2)}</strong></p>
+        <p>Total de Despesas: <strong>R$ {totalDespesas.toFixed(2)}</strong></p>
+        <p>Resultado (Lucro / Prejuízo): <strong>R$ {resultado.toFixed(2)}</strong></p>
+        <p className="text-sm text-indigo-600 font-medium mt-4">
+          {sugestaoIA}
+        </p>
       </div>
     </div>
   );
