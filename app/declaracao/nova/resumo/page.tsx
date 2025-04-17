@@ -21,36 +21,37 @@ export default function ResumoPage() {
   const gerarPDF = () => {
     const doc = new jsPDF();
 
+    const { dadosPessoais, rendimentos, bens, deducoes } = dados;
+
     doc.setFontSize(18);
     doc.text("Resumo da Declaração de Imposto de Renda", 14, 22);
 
     doc.setFontSize(14);
     doc.text("Dados Pessoais", 14, 35);
     autoTable(doc, {
-  startY: 40,
-  body: Object.entries(dados.dadosPessoais).map(([chave, valor]) => [chave, String(valor)]) as any,
-});
-
-doc.text("Rendimentos", 14, (doc as any).lastAutoTable.finalY + 10);
-
-autoTable(doc, {
-  startY: (doc as any).lastAutoTable.finalY + 15,
-  head: [["Fonte Pagadora", "CNPJ", "Valor"]],
-  body: rendimentos.map((r) => [r.fonte, r.cnpj, r.valor]),
-});
-
-    doc.text("Bens e Direitos", 14, doc.lastAutoTable.finalY + 10);
-    autoTable(doc, {
-      startY: doc.lastAutoTable.finalY + 15,
-      head: [["Descrição", "Valor"]],
-      body: dados.bens.map((b: any) => [b.descricao, b.valor]),
+      startY: 40,
+      body: Object.entries(dadosPessoais).map(([chave, valor]) => [chave, String(valor)]) as any,
     });
 
-    doc.text("Deduções", 14, doc.lastAutoTable.finalY + 10);
+    doc.text("Rendimentos", 14, (doc as any).lastAutoTable.finalY + 10);
     autoTable(doc, {
-      startY: doc.lastAutoTable.finalY + 15,
+      startY: (doc as any).lastAutoTable.finalY + 15,
+      head: [["Fonte Pagadora", "CNPJ", "Valor"]],
+      body: rendimentos.map((r: any) => [r.fonte, r.cnpj, r.valor]),
+    });
+
+    doc.text("Bens e Direitos", 14, (doc as any).lastAutoTable.finalY + 10);
+    autoTable(doc, {
+      startY: (doc as any).lastAutoTable.finalY + 15,
+      head: [["Descrição", "Valor"]],
+      body: bens.map((b: any) => [b.descricao, b.valor]),
+    });
+
+    doc.text("Deduções", 14, (doc as any).lastAutoTable.finalY + 10);
+    autoTable(doc, {
+      startY: (doc as any).lastAutoTable.finalY + 15,
       head: [["Tipo", "Valor"]],
-      body: dados.deducoes.map((d: any) => [d.tipo, d.valor]),
+      body: deducoes.map((d: any) => [d.tipo, d.valor]),
     });
 
     doc.save("declaracao-imposto-de-renda.pdf");
