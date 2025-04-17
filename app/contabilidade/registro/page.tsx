@@ -117,12 +117,13 @@ const gerarPDF = () => {
   doc.setFontSize(12);
   doc.setTextColor(100);
 
-  const tableColumn = ["Descrição", "Valor (R$)", "Tipo"];
-  const tableRows = transacoes.map((t) => [
-    t.descricao,
-    t.valor.toFixed(2),
-    t.tipo,
-  ]);
+  const tableRows = movimentos.map((t) => [
+  t.descricao,
+  t.valor.toFixed(2),
+  t.tipo,
+
+]);
+
 
   autoTable(doc, {
     startY: 30,
