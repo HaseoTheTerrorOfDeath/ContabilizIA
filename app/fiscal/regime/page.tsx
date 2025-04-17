@@ -1,63 +1,40 @@
-"use client";
+'use client';
 
-import { useState } from "react";
+import React from 'react';
 
 const regimes = [
   {
     nome: "Simples Nacional",
     descricao:
-      "Regime simplificado para micro e pequenas empresas. Unifica tributos federais, estaduais e municipais em uma guia única (D
-::contentReference[oaicite:0]{index=0} AS, ICMS, ISS). Ideal para empresas com faturamento anual de até R$ 4,8 milhões.",
+      "Regime simplificado para micro e pequenas empresas. Unifica tributos federais, estaduais e municipais em uma guia única (DAS, ICMS, ISS). Ideal para empresas com faturamento anual de até R$ 4,8 milhões.",
   },
   {
     nome: "Lucro Presumido",
     descricao:
-      "Utiliza uma base de cálculo fixa sobre a receita bruta para apurar os impostos. Indicado para empresas com receita anual de até R$ 78 milhões.",
+      "Regime para empresas com faturamento anual de até R$ 78 milhões. A base de cálculo do imposto é presumida, facilitando a apuração dos tributos.",
   },
   {
     nome: "Lucro Real",
     descricao:
-      "Tributação com base no lucro efetivamente apurado. Exigido para empresas com receita acima de R$ 78 milhões ou atividades específicas.",
+      "Obrigatório para empresas com faturamento acima de R$ 78 milhões ou que exercem atividades específicas. Os tributos são calculados sobre o lucro efetivamente apurado.",
   },
 ];
 
-export default function RegimeTributarioPage() {
-  const [regimeSelecionado, setRegimeSelecionado] = useState("");
-
+const RegimePage = () => {
   return (
-    <div className="p-10">
-      <h1 className="text-3xl font-bold mb-6">Regime Tributário</h1>
-
-      <div className="grid md:grid-cols-3 gap-6">
-        {regimes.map((regime) => (
-          <div
-            key={regime.nome}
-            className={`p-6 rounded-md shadow-md cursor-pointer border-2 ${
-              regimeSelecionado === regime.nome
-                ? "border-blue-600 bg-blue-50"
-                : "border-gray-200"
-            }`}
-            onClick={() => setRegimeSelecionado(regime.nome)}
-          >
-            <h2 className="text-xl font-semibold mb-2">{regime.nome}</h2>
-            <p className="text-sm text-gray-600">{regime.descricao}</p>
-          </div>
+    <div>
+      <h1>Regimes Tributários</h1>
+      <ul>
+        {regimes.map((regime, index) => (
+          <li key={index}>
+            <h2>{regime.nome}</h2>
+            <p>{regime.descricao}</p>
+          </li>
         ))}
-      </div>
-
-      {regimeSelecionado && (
-        <div className="mt-10 bg-white p-6 rounded-md shadow-md max-w-2xl">
-          <h3 className="text-lg font-bold text-blue-700 mb-2">
-            Regime selecionado:
-          </h3>
-          <p className="text-gray-700">
-            {regimes.find((r) => r.nome === regimeSelecionado)?.descricao}
-          </p>
-        </div>
-      )}
+      </ul>
     </div>
   );
-}
+};
 
- 
+export default RegimePage;
 
