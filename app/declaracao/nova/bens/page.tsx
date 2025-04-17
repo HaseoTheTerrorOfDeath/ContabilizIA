@@ -8,12 +8,14 @@ export default function BensPage() {
   const [bens, setBens] = useState([{ descricao: "", valor: "" }]);
 
   const handleChange = (index: number, e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    setBens((prev) => {
-      const newBens = [...prev];
-      newBens[index][name] = value;
-      return newBens;
-    });
+  const { name, value } = e.target;
+
+  setBens((prev) => {
+    const newBens = [...prev];
+    (newBens[index] as any)[name] = value;
+    return newBens;
+  });
+
   };
 
   const adicionarBem = () => {
