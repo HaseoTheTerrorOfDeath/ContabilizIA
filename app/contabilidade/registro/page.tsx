@@ -1,6 +1,5 @@
 "use client";
 
-
 import { jsPDF } from "jspdf";
 import autoTable from "jspdf-autotable";
 import { useState } from "react";
@@ -33,6 +32,31 @@ export default function RegistroMovimentacao() {
     } else {
       alert("Preencha todos os campos corretamente.");
     }
+  };
+
+  const gerarPDF = () => {
+    const doc = new jsPDF();
+
+    doc.setFontSize(18);
+    doc.text("Relatório de Movimentações", 14, 22);
+    doc.setFontSize(12);
+    doc.setTextColor(100);
+
+    const tableColumn = ["Data", "Descrição", "Tipo", "Valor (R$)"];
+    const tableRows = movimentos.map((t) => [
+      t.data,
+      t.descricao,
+      t.tipo,
+      t.valor.toFixed(2),
+    ]);
+
+    autoTable(doc, {
+      startY: 30,
+      head: [tableColumn],
+      body: tableRows,
+    });
+
+    doc.save("relatorio_movimentacoes.pdf");
   };
 
   return (
@@ -77,9 +101,17 @@ export default function RegistroMovimentacao() {
 
       <button
         onClick={adicionarMovimento}
-        className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-md mb-10"
+        className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-md mb-6"
       >
         Adicionar
+      </button>
+
+      {/* Botão para gerar PDF */}
+      <button
+        onClick={gerarPDF}
+        className="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-8 rounded-md transition mb-10"
+      >
+        Gerar PDF
       </button>
 
       {/* Lista de Movimentações */}
@@ -108,37 +140,4 @@ export default function RegistroMovimentacao() {
     </div>
   );
 }
-
-const gerarPDF = () => {
-  const doc = new jsPDF();
-
-  doc.setFontSize(18);
-  doc.text("Relatório de Movimentações", 14, 22);
-  doc.setFontSize(12);
-  doc.setTextColor(100);
-
-  const tableRows = movimentos.map((t) => [
-  t.descricao,
-  t.valor.toFixed(2),
-  t.tipo,
-
-]);
-
-
-  autoTable(doc, {
-    startY: 30,
-    head: [tableColumn],
-    body: tableRows,
-  });
-
-  doc.save("relatorio_movimentacoes.pdf");
-};
-
-<button
-  onClick={gerarPDF}
-  className="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-8 rounded-md transition mb-10"
->
-  Gerar PDF
-</button>
-
 
