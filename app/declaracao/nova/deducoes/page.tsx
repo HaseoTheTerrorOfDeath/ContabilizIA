@@ -7,14 +7,15 @@ export default function DeducoesPage() {
   const router = useRouter();
   const [deducoes, setDeducoes] = useState([{ tipo: "", valor: "" }]);
 
-  const handleChange = (index: number, e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    setDeducoes((prev) => {
-      const newDeducoes = [...prev];
-      newDeducoes[index][name] = value;
-      return newDeducoes;
-    });
-  };
+ const handleChange = (index: number, e: React.ChangeEvent<HTMLInputElement>) => {
+  const { name, value } = e.target;
+
+  setDeducoes((prev) => {
+    const newDeducoes = [...prev];
+    (newDeducoes[index] as any)[name] = value; // ← CORRIGIDO AQUI
+    return newDeducoes;
+  });
+};
 
   const adicionarDeducao = () => {
     setDeducoes((prev) => [...prev, { tipo: "", valor: "" }]);
