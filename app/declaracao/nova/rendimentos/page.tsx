@@ -7,14 +7,15 @@ export default function RendimentosPage() {
   const router = useRouter();
   const [rendimentos, setRendimentos] = useState([{ fonte: "", cnpj: "", valor: "" }]);
 
-  const handleChange = (index: number, e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    setRendimentos((prev) => {
-      const newRendimentos = [...prev];
-      newRendimentos[index][name] = value;
-      return newRendimentos;
-    });
-  };
+const handleChange = (index: number, e: React.ChangeEvent<HTMLInputElement>) => {
+  const { name, value } = e.target;
+
+  setRendimentos((prev) => {
+    const newRendimentos = [...prev];
+    (newRendimentos[index] as any)[name] = value;
+    return newRendimentos;
+  });
+};
 
   const adicionarRendimento = () => {
     setRendimentos((prev) => [...prev, { fonte: "", cnpj: "", valor: "" }]);
