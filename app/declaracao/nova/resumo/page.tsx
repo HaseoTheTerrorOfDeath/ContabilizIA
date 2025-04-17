@@ -27,9 +27,9 @@ export default function ResumoPage() {
     doc.setFontSize(14);
     doc.text("Dados Pessoais", 14, 35);
     autoTable(doc, {
-      startY: 40,
-      body: Object.entries(dados.dadosPessoais).map(([chave, valor]) => [chave, valor]),
-    });
+  startY: 40,
+  body: Object.entries(dados.dadosPessoais).map(([chave, valor]) => [chave, String(valor)]) as any,
+});
 
     doc.text("Rendimentos", 14, doc.lastAutoTable.finalY + 10);
     autoTable(doc, {
