@@ -71,7 +71,10 @@ export default function ResumoPage() {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {Object.entries(dados.dadosPessoais).map(([key, value]) => (
             <div key={key} className="p-4 bg-white rounded shadow">
-              <span className="font-semibold capitalize">{key.replace("_", " ")}:</span> {value}
+              <span className="font-semibold capitalize">
+                {key.replace("_", " ")}:
+              </span>{" "}
+              {String(value)}
             </div>
           ))}
         </div>
