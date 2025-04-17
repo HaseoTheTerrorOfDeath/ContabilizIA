@@ -31,12 +31,13 @@ export default function ResumoPage() {
   body: Object.entries(dados.dadosPessoais).map(([chave, valor]) => [chave, String(valor)]) as any,
 });
 
-    doc.text("Rendimentos", 14, doc.lastAutoTable.finalY + 10);
-    autoTable(doc, {
-      startY: doc.lastAutoTable.finalY + 15,
-      head: [["Fonte Pagadora", "CNPJ", "Valor"]],
-      body: dados.rendimentos.map((r: any) => [r.fonte, r.cnpj, r.valor]),
-    });
+doc.text("Rendimentos", 14, (doc as any).lastAutoTable.finalY + 10);
+
+autoTable(doc, {
+  startY: (doc as any).lastAutoTable.finalY + 15,
+  head: [["Fonte Pagadora", "CNPJ", "Valor"]],
+  body: rendimentos.map((r) => [r.fonte, r.cnpj, r.valor]),
+});
 
     doc.text("Bens e Direitos", 14, doc.lastAutoTable.finalY + 10);
     autoTable(doc, {
